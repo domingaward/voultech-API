@@ -48,9 +48,39 @@ namespace PurchaseOrderAPI.Services
             using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
+                // VALIDATION 1: Check for duplicate products in the same order
+                var productIds = createDto.OrdenProductos.Select(p => p.ProductoId).ToList();
+                var duplicateProducts = productIds.GroupBy(id => id)
+                    .Where(g => g.Count() > 1)
+                    .Select(g => g.Key)
+                    .ToList();
+
+                if (duplicateProducts.Any())
+                {
+                    throw new ArgumentException($"Los siguientes productos están duplicados en la orden: {string.Join(", ", duplicateProducts)}");
+                }
+
+                // VALIDATION 2: Verify all products exist before creating the order
+                var existingProductIds = await _context.Productos
+                    .Where(p => productIds.Contains(p.Id))
+                    .Select(p => p.Id)
+                    .ToListAsync();
+
+                var missingProducts = productIds.Except(existingProductIds).ToList();
+                if (missingProducts.Any())
+                {
+                    throw new ArgumentException($"Los siguientes productos no existen: {string.Join(", ", missingProducts)}");
+                }
+
+                // VALIDATION 3: Business rule validations
+                if (createDto.OrdenProductos.Count > 50)
+                {
+                    throw new ArgumentException("No se pueden incluir más de 50 productos por orden");
+                }
+
                 var orden = new OrdenCompra
                 {
-                    Cliente = createDto.Cliente,
+                    Cliente = createDto.Cliente.Trim(),
                     FechaCreacion = DateTime.UtcNow
                 };
 
@@ -59,12 +89,6 @@ namespace PurchaseOrderAPI.Services
 
                 foreach (var item in createDto.OrdenProductos)
                 {
-                    var producto = await _context.Productos.FindAsync(item.ProductoId);
-                    if (producto == null)
-                    {
-                        throw new ArgumentException($"Producto con ID {item.ProductoId} no encontrado");
-                    }
-
                     var ordenProducto = new OrdenProducto
                     {
                         OrdenId = orden.Id,
@@ -108,26 +132,45 @@ namespace PurchaseOrderAPI.Services
                 if (orden == null) return null;
 
                 // Update basic properties
-                orden.Cliente = updateDto.Cliente;
+                orden.Cliente = updateDto.Cliente.Trim();
 
                 // Update products if provided
                 if (updateDto.OrdenProductos != null)
                 {
-                    // Validate that the products list is not empty
+                    // VALIDATION 1: Check that the products list is not empty
                     if (updateDto.OrdenProductos.Count == 0)
                     {
                         throw new ArgumentException("Debe incluir al menos un producto en la orden");
                     }
 
-                    // Validate that all new products exist
+                    // VALIDATION 2: Check for duplicate products in the update
                     var newProductIds = updateDto.OrdenProductos.Select(p => p.ProductoId).ToList();
-                    foreach (var productId in newProductIds)
+                    var duplicateProducts = newProductIds.GroupBy(id => id)
+                        .Where(g => g.Count() > 1)
+                        .Select(g => g.Key)
+                        .ToList();
+
+                    if (duplicateProducts.Any())
                     {
-                        var producto = await _context.Productos.FindAsync(productId);
-                        if (producto == null)
-                        {
-                            throw new ArgumentException($"Producto con ID {productId} no encontrado");
-                        }
+                        throw new ArgumentException($"Los siguientes productos están duplicados en la orden: {string.Join(", ", duplicateProducts)}");
+                    }
+
+                    // VALIDATION 3: Verify all new products exist
+                    var existingProductIds = await _context.Productos
+                        .Where(p => newProductIds.Contains(p.Id))
+                        .Select(p => p.Id)
+                        .ToListAsync();
+
+                    var missingProducts = newProductIds.Except(existingProductIds).ToList();
+                    if (missingProducts.Any())
+                    {
+                        throw new ArgumentException($"Los siguientes productos no existen: {string.Join(", ", missingProducts)}");
+                    }
+
+                    // VALIDATION 4: Business rule validations
+                    if (updateDto.OrdenProductos.Count > 50)
+                    {
+                        throw new ArgumentException("No se pueden incluir más de 50 productos por orden");
                     }
 
                     // Get current product IDs in the order

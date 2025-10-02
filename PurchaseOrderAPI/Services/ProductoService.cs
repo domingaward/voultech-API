@@ -35,9 +35,35 @@ namespace PurchaseOrderAPI.Services
 
         public async Task<ProductoDto> CreateAsync(CreateProductoDto createDto)
         {
+            // Additional business validations beyond data annotations
+            var existingProduct = await _context.Productos
+                .FirstOrDefaultAsync(p => p.Nombre.ToLower() == createDto.Nombre.ToLower());
+            
+            if (existingProduct != null)
+            {
+                throw new ArgumentException($"Ya existe un producto con el nombre '{createDto.Nombre}'");
+            }
+
+            // Validate price range (additional validation beyond DTO)
+            if (createDto.Precio < 0.01m)
+            {
+                throw new ArgumentException("El precio debe ser al menos $0.01");
+            }
+
+            // Validate name format
+            if (string.IsNullOrWhiteSpace(createDto.Nombre))
+            {
+                throw new ArgumentException("El nombre del producto no puede estar vacío");
+            }
+
+            if (createDto.Nombre.Trim().Length < 2)
+            {
+                throw new ArgumentException("El nombre del producto debe tener al menos 2 caracteres");
+            }
+
             var producto = new Producto
             {
-                Nombre = createDto.Nombre,
+                Nombre = createDto.Nombre.Trim(),
                 Precio = createDto.Precio
             };
 

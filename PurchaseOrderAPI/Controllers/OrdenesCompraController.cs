@@ -97,6 +97,20 @@ namespace PurchaseOrderAPI.Controllers
                     return BadRequest(ApiResponse.ErrorResult("Datos de entrada inválidos", ModelState));
                 }
 
+                // Additional validation: Check for empty or whitespace-only client names
+                if (string.IsNullOrWhiteSpace(createDto.Cliente))
+                {
+                    _logger.LogWarning("Intento de crear orden con cliente vacío o solo espacios");
+                    return BadRequest(ApiResponse.ErrorResult("El nombre del cliente no puede estar vacío o contener solo espacios"));
+                }
+
+                // Additional validation: Check for empty products list
+                if (createDto.OrdenProductos == null || !createDto.OrdenProductos.Any())
+                {
+                    _logger.LogWarning("Intento de crear orden sin productos");
+                    return BadRequest(ApiResponse.ErrorResult("La orden debe contener al menos un producto"));
+                }
+
                 _logger.LogInformation("Creando nueva orden de compra para cliente: {Cliente}", createDto.Cliente);
                 var orden = await _ordenCompraService.CreateAsync(createDto);
 
@@ -139,6 +153,13 @@ namespace PurchaseOrderAPI.Controllers
                 {
                     _logger.LogWarning("Datos de entrada inválidos para actualizar orden de compra ID {Id}: {@Errors}", id, ModelState);
                     return BadRequest(ApiResponse.ErrorResult("Datos de entrada inválidos", ModelState));
+                }
+
+                // Additional validation: Check for empty or whitespace-only client names
+                if (string.IsNullOrWhiteSpace(updateDto.Cliente))
+                {
+                    _logger.LogWarning("Intento de actualizar orden {Id} con cliente vacío o solo espacios", id);
+                    return BadRequest(ApiResponse.ErrorResult("El nombre del cliente no puede estar vacío o contener solo espacios"));
                 }
 
                 _logger.LogInformation("Actualizando orden de compra con ID: {Id}", id);

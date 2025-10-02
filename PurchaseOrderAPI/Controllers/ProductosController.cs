@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using PurchaseOrderAPI.DTOs;
 using PurchaseOrderAPI.Services;
+using System.ComponentModel.DataAnnotations;
 
 namespace PurchaseOrderAPI.Controllers
 {
@@ -59,6 +60,13 @@ namespace PurchaseOrderAPI.Controllers
                 {
                     _logger.LogWarning("Datos de entrada inválidos para crear producto: {@Errors}", ModelState);
                     return BadRequest(ApiResponse.ErrorResult("Datos de entrada inválidos", ModelState));
+                }
+
+                // Additional validation: Check for empty or whitespace-only names
+                if (string.IsNullOrWhiteSpace(createDto.Nombre))
+                {
+                    _logger.LogWarning("Intento de crear producto con nombre vacío o solo espacios");
+                    return BadRequest(ApiResponse.ErrorResult("El nombre del producto no puede estar vacío o contener solo espacios"));
                 }
 
                 _logger.LogInformation("Creando nuevo producto: {Nombre}", createDto.Nombre);

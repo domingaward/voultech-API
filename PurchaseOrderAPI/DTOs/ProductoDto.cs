@@ -12,7 +12,7 @@ namespace PurchaseOrderAPI.DTOs
     public class CreateProductoDto
     {
         [Required(ErrorMessage = "El nombre del producto es requerido")]
-        [StringLength(100, ErrorMessage = "El nombre no puede exceder 100 caracteres")]
+        [StringLength(100, MinimumLength = 2, ErrorMessage = "El nombre debe tener entre 2 y 100 caracteres")]
         public string Nombre { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "El precio del producto es requerido")]
