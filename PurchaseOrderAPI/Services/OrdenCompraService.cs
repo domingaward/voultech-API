@@ -76,12 +76,13 @@ namespace PurchaseOrderAPI.Services
 
                 await _context.SaveChangesAsync();
 
-                // Calculate and update total
+                // Calculate total with dynamic discounts
                 var ordenCompleta = await _context.OrdenesCompra
                     .Include(o => o.OrdenProductos)
+                    .ThenInclude(op => op.Producto)
                     .FirstAsync(o => o.Id == orden.Id);
 
-                ordenCompleta.CalcularTotal();
+                CalcularTotalConDescuentos(ordenCompleta);
                 await _context.SaveChangesAsync();
 
                 await transaction.CommitAsync();
@@ -164,13 +165,13 @@ namespace PurchaseOrderAPI.Services
                     // Save changes to update the OrdenProductos
                     await _context.SaveChangesAsync();
                     
-                    // Reload the order with updated products to calculate total
+                    // Reload the order with updated products to calculate total with discounts
                     var ordenCompleta = await _context.OrdenesCompra
                         .Include(o => o.OrdenProductos)
                         .ThenInclude(op => op.Producto)
                         .FirstAsync(o => o.Id == id);
                     
-                    ordenCompleta.CalcularTotal();
+                    CalcularTotalConDescuentos(ordenCompleta);
                 }
 
                 await _context.SaveChangesAsync();
@@ -213,6 +214,64 @@ namespace PurchaseOrderAPI.Services
                     ProductoNombre = op.Producto?.Nombre ?? ""
                 }).ToList()
             };
+        }
+
+        /// <summary>
+        /// Calculate the order total applying dynamic discounts based on business rules
+        /// </summary>
+        /// <param name="orden">La orden de compra con productos cargados</param>
+        private void CalcularTotalConDescuentos(OrdenCompra orden)
+        {
+            if (orden.OrdenProductos == null || !orden.OrdenProductos.Any())
+            {
+                orden.Total = 0;
+                return;
+            }
+
+            // Subtotal without discounts
+            decimal subtotal = orden.OrdenProductos.Sum(op => op.Producto?.Precio ?? 0);
+
+            // Apply discounts based on business rules
+            decimal totalConDescuentos = AplicarDescuentos(subtotal, orden.OrdenProductos.Count);
+
+            orden.Total = totalConDescuentos;
+        }
+
+        /// <summary>
+        /// Apply discounts based on defined business rules:
+        /// - If total > $500, apply 10% discount
+        /// - If more than 5 distinct products, apply additional 5% discount
+        /// - Both discounts can stack up to a maximum of 15%
+        /// </summary>
+        /// <param name="subtotal">Subtotal antes de descuentos</param>
+        /// <param name="cantidadProductos">Cantidad de productos distintos en la orden</param>
+        /// <returns>Total con descuentos aplicados</returns>
+        private static decimal AplicarDescuentos(decimal subtotal, int cantidadProductos)
+        {
+            decimal totalConDescuentos = subtotal;
+            decimal porcentajeDescuentoTotal = 0;
+
+            // Total > $500 => 10% discount
+            if (subtotal > 500)
+            {
+                porcentajeDescuentoTotal += 0.10m;
+            }
+
+            // Total > 5 products => 5% additional discount
+            if (cantidadProductos > 5)
+            {
+                porcentajeDescuentoTotal += 0.05m; 
+            }
+
+            // Apply total discount (max 15% if both conditions met)
+            if (porcentajeDescuentoTotal > 0)
+            {
+                decimal montoDescuento = subtotal * porcentajeDescuentoTotal;
+                totalConDescuentos = subtotal - montoDescuento;
+            }
+
+            // Round to 2 decimals to maintain monetary precision
+            return Math.Round(totalConDescuentos, 2);
         }
     }
 }

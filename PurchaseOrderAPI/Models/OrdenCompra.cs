@@ -21,7 +21,9 @@ namespace PurchaseOrderAPI.Models
         // Navigation property
         public virtual ICollection<OrdenProducto> OrdenProductos { get; set; } = new List<OrdenProducto>();
 
-        // Method to calculate total based on associated products
+        // Method to calculate total based on associated products (backward compatibility)
+        // Note: This method calculates without discounts for backward compatibility
+        // The service layer handles discount calculations
         public void CalcularTotal()
         {
             Total = OrdenProductos?.Sum(op => op.Producto?.Precio ?? 0) ?? 0;
