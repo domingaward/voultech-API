@@ -172,27 +172,82 @@ Todas las respuestas de la API siguen un formato estandarizado:
    dotnet restore
    ```
 
-3. **Configurar la base de datos**
+3. **Configurar SQL Server LocalDB**
    
    Verificar que SQL Server LocalDB esté ejecutándose:
    ```powershell
+   # Verificar estado de LocalDB
    sqllocaldb info "MSSQLLocalDB"
-   sqllocaldb start "MSSQLLocalDB"  # Si está detenido
+   
+   # Si está detenido, iniciarlo
+   sqllocaldb start "MSSQLLocalDB"
    ```
 
-4. **Ejecutar la aplicación**
+4. **Instalar Entity Framework Tools (si no está instalado)**
+   ```bash
+   # Instalar EF Tools compatible con .NET 7
+   dotnet tool install --global dotnet-ef --version 7.0.20
+   
+   # Verificar instalación
+   dotnet ef --version
+   ```
+
+5. **Aplicar migraciones de base de datos**
+   ```bash
+   # Aplicar migraciones (crear base de datos y tablas)
+   dotnet ef database update
+   ```
+   
+   Este comando:
+   - Crea la base de datos `PurchaseOrderDB` en LocalDB
+   - Crea las tablas: `OrdenesCompra`, `Productos`, `OrdenProductos`
+   - Inserta datos de prueba (6 productos y 2 órdenes)
+
+6. **Ejecutar la aplicación**
    ```bash
    dotnet run
    ```
 
-   La API estará disponible en:
-   - **HTTP**: `http://localhost:5000`
-   - **HTTPS**: `https://localhost:5001`
-   - **Swagger UI**: `https://localhost:5001` (raíz)
+   La API estará disponible en (según configuración en `launchSettings.json`):
+   - **HTTP**: `http://localhost:5064`
+   - **HTTPS**: `https://localhost:7020`
+   - **Swagger UI**: `http://localhost:5064` o `https://localhost:7020`
+   
+   > **Nota**: Si los puertos están ocupados, .NET asignará puertos alternativos automáticamente. Siempre verifica la salida del comando `dotnet run` para confirmar las URLs exactas.
 
 ### Configuración de Base de Datos
 
-La aplicación utiliza **Code First** con Entity Framework Core. La base de datos se crea automáticamente al ejecutar la aplicación por primera vez usando `context.Database.EnsureCreated()`.
+La aplicación utiliza **Entity Framework Core** con migraciones para manejar el esquema de base de datos:
+
+- **Connection String**: Configurada en `appsettings.json` para LocalDB
+- **Migraciones**: Localizadas en `PurchaseOrderAPI/Migrations/`
+- **Modelo**: Code First basado en las entidades en `Models/`
+
+### Configuración de Puertos
+
+Los puertos de la API están definidos en `Properties/launchSettings.json`:
+
+```json
+{
+  "profiles": {
+    "http": {
+      "applicationUrl": "http://localhost:5064"
+    },
+    "https": {
+      "applicationUrl": "https://localhost:7020;http://localhost:5064"
+    }
+  }
+}
+```
+
+**Para cambiar los puertos:**
+1. Edita `Properties/launchSettings.json`
+2. Modifica los valores de `applicationUrl`
+3. Reinicia la aplicación con `dotnet run`
+
+**Comportamiento automático:**
+- Si un puerto está ocupado, .NET asignará uno disponible automáticamente
+- Siempre verifica la salida de `dotnet run` para confirmar las URLs exactas
 
 #### Datos de Ejemplo (Seed Data)
 La aplicación incluye datos de prueba:
@@ -211,124 +266,212 @@ La aplicación incluye datos de prueba:
 
 ## 🚀 Uso de la API
 
-A continuación se muestran ejemplos prácticos para utilizar todos los endpoints disponibles:
+A continuación se muestran ejemplos prácticos para utilizar todos los endpoints disponibles.
+
+> **📁 Colección de Postman**: Puedes importar la colección completa de tests desde el archivo [`docs/postman/Voultech API Tests.postman_collection.json`](docs/postman/Voultech%20API%20Tests.postman_collection.json) para probar todos los endpoints directamente en Postman.
+
+> **⚠️ Importante**: Los ejemplos usan `http://localhost:5064`, pero verifica la URL exacta en la salida de `dotnet run` ya que el puerto puede variar si está ocupado.
 
 ### Obtener todos los Productos
 ```bash
-GET /api/productos
+GET http://localhost:5064/api/productos
 ```
 
 **Respuesta exitosa:**
 ```json
 {
-  "success": true,
-  "message": "Productos obtenidos exitosamente",
-  "data": [
-    {
-      "id": 1,
-      "nombre": "Laptop HP Pavilion",
-      "precio": 15000.00
-    },
-    {
-      "id": 2,
-      "nombre": "Mouse Logitech",
-      "precio": 500.00
-    }
-  ],
-  "timestamp": "2025-10-02T12:00:00Z"
+    "success": true,
+    "message": "Productos obtenidos exitosamente",
+    "data": [
+        {
+            "id": 1,
+            "nombre": "Laptop HP Pavilion",
+            "precio": 15000.00
+        },
+        {
+            "id": 2,
+            "nombre": "Mouse Logitech",
+            "precio": 500.00
+        },
+        {
+            "id": 3,
+            "nombre": "Teclado Mecánico",
+            "precio": 1200.00
+        },
+        {
+            "id": 4,
+            "nombre": "Monitor 24 pulgadas",
+            "precio": 4500.00
+        },
+        {
+            "id": 5,
+            "nombre": "Impresora Multifuncional",
+            "precio": 8000.00
+        },
+        {
+            "id": 6,
+            "nombre": "Silla Ergonómica",
+            "precio": 3500.00
+        }
+    ],
+    "timestamp": "2025-10-03T03:07:56.4577255Z"
 }
 ```
 
+**Captura de pantalla en Postman:**
+
+<div align="center">
+  <img src="docs/images/GET Productos.png" alt="GET Productos en Postman" width="800">
+  <br>
+  <em>Ejemplo de respuesta del endpoint GET /api/productos en Postman</em>
+</div>
+
 ### Crear un Producto
 ```bash
-POST /api/productos
+POST http://localhost:5064/api/productos
 Content-Type: application/json
 
 {
-  "nombre": "Nuevo Producto",
-  "precio": 150.50
+  "nombre": "Webcam HD 1080p",
+  "precio": 2500.00
 }
 ```
 
 **Respuesta exitosa (201 Created):**
 ```json
 {
-  "success": true,
-  "message": "Producto creado exitosamente",
-  "data": {
-    "id": 7,
-    "nombre": "Nuevo Producto",
-    "precio": 150.50
-  },
-  "timestamp": "2025-10-02T12:00:00Z"
+    "success": true,
+    "message": "Producto creado exitosamente",
+    "data": {
+        "id": 7,
+        "nombre": "Webcam HD 1080p",
+        "precio": 2500.00
+    },
+    "timestamp": "2025-10-03T03:12:48.1054592Z"
 }
 ```
+
+**Captura de pantalla en Postman:**
+
+<div align="center">
+  <img src="docs/images/POST Productos.png" alt="POST Productos en Postman" width="800">
+  <br>
+  <em>Ejemplo de creación de producto con POST /api/productos en Postman</em>
+</div>
 
 ### Obtener todas las Órdenes de Compra
 ```bash
-GET /api/ordenes
+GET http://localhost:5064/api/ordenes
 ```
 
 **Respuesta exitosa:**
 ```json
 {
-  "success": true,
-  "data": [
-    {
-      "id": 1,
-      "cliente": "TechSolutions S.A.",
-      "fechaCreacion": "2025-10-01T10:30:00Z",
-      "total": 15030.00,
-      "ordenProductos": [
+    "success": true,
+    "data": [
         {
-          "id": 1,
-          "productoId": 1,
-          "productoNombre": "Laptop HP Pavilion"
+            "id": 1,
+            "cliente": "TechSolutions S.A.",
+            "fechaCreacion": "2025-10-01T10:30:00",
+            "total": 16700.00,
+            "ordenProductos": [
+                {
+                    "id": 1,
+                    "productoId": 1,
+                    "productoNombre": "Laptop HP Pavilion"
+                },
+                {
+                    "id": 2,
+                    "productoId": 2,
+                    "productoNombre": "Mouse Logitech"
+                },
+                {
+                    "id": 3,
+                    "productoId": 3,
+                    "productoNombre": "Teclado Mecánico"
+                }
+            ]
         },
         {
-          "id": 2,
-          "productoId": 2,
-          "productoNombre": "Mouse Logitech"
+            "id": 2,
+            "cliente": "Oficinas Corporativas Voultech",
+            "fechaCreacion": "2025-10-02T14:15:00",
+            "total": 16000.00,
+            "ordenProductos": [
+                {
+                    "id": 4,
+                    "productoId": 4,
+                    "productoNombre": "Monitor 24 pulgadas"
+                },
+                {
+                    "id": 5,
+                    "productoId": 5,
+                    "productoNombre": "Impresora Multifuncional"
+                },
+                {
+                    "id": 6,
+                    "productoId": 6,
+                    "productoNombre": "Silla Ergonómica"
+                }
+            ]
         }
-      ]
-    }
-  ],
-  "message": "Órdenes obtenidas exitosamente",
-  "timestamp": "2025-10-02T12:00:00Z"
+    ],
+    "message": "Órdenes obtenidas exitosamente"
 }
 ```
+
+**Captura de pantalla en Postman:**
+
+<div align="center">
+  <img src="docs/images/GET Ordenes.png" alt="GET Órdenes en Postman" width="800">
+  <br>
+  <em>Ejemplo de respuesta del endpoint GET /api/ordenes en Postman</em>
+</div>
 
 ### Obtener una Orden de Compra Específica (por ID)
 ```bash
-GET /api/ordenes/1
+GET http://localhost:5064/api/ordenes/1
 ```
 
 **Respuesta exitosa:**
 ```json
 {
-  "success": true,
-  "message": "Orden obtenida exitosamente",
-  "data": {
-    "id": 1,
-    "cliente": "TechSolutions S.A.",
-    "fechaCreacion": "2025-10-01T10:30:00Z",
-    "total": 15030.00,
-    "ordenProductos": [
-      {
+    "success": true,
+    "message": "Orden obtenida exitosamente",
+    "data": {
         "id": 1,
-        "productoId": 1,
-        "productoNombre": "Laptop HP Pavilion"
-      },
-      {
-        "id": 2,
-        "productoId": 2,
-        "productoNombre": "Mouse Logitech"
-      }
-    ]
-  },
-  "timestamp": "2025-10-02T12:00:00Z"
+        "cliente": "TechSolutions S.A.",
+        "fechaCreacion": "2025-10-01T10:30:00",
+        "total": 16700.00,
+        "ordenProductos": [
+            {
+                "id": 1,
+                "productoId": 1,
+                "productoNombre": "Laptop HP Pavilion"
+            },
+            {
+                "id": 2,
+                "productoId": 2,
+                "productoNombre": "Mouse Logitech"
+            },
+            {
+                "id": 3,
+                "productoId": 3,
+                "productoNombre": "Teclado Mecánico"
+            }
+        ]
+    },
+    "timestamp": "2025-10-03T03:16:54.1128915Z"
 }
 ```
+
+**Captura de pantalla en Postman:**
+
+<div align="center">
+  <img src="docs/images/GET Orden id.png" alt="GET Orden por ID en Postman" width="800">
+  <br>
+  <em>Ejemplo de respuesta del endpoint GET /api/ordenes/{id} en Postman</em>
+</div>
 
 **Respuesta de error (404 Not Found):**
 ```json
@@ -341,15 +484,21 @@ GET /api/ordenes/1
 
 ### Crear una Orden de Compra
 ```bash
-POST /api/ordenes
+POST http://localhost:5064/api/ordenes
 Content-Type: application/json
 
 {
-  "cliente": "Cliente Ejemplo S.A.",
+  "cliente": "Empresa Innovadora Ltda.",
   "ordenProductos": [
-    { "productoId": 1 },
-    { "productoId": 3 },
-    { "productoId": 4 }
+    {
+      "productoId": 1
+    },
+    {
+      "productoId": 4
+    },
+    {
+      "productoId": 5
+    }
   ]
 }
 ```
@@ -357,46 +506,60 @@ Content-Type: application/json
 **Respuesta exitosa (201 Created):**
 ```json
 {
-  "success": true,
-  "message": "Orden de compra creada exitosamente",
-  "data": {
-    "id": 3,
-    "cliente": "Cliente Ejemplo S.A.",
-    "fechaCreacion": "2025-10-02T12:00:00Z",
-    "total": 18630.00,
-    "ordenProductos": [
-      {
-        "id": 7,
-        "productoId": 1,
-        "productoNombre": "Laptop HP Pavilion"
-      },
-      {
-        "id": 8,
-        "productoId": 3,
-        "productoNombre": "Teclado Mecánico"
-      },
-      {
-        "id": 9,
-        "productoId": 4,
-        "productoNombre": "Monitor 24 pulgadas"
-      }
-    ]
-  },
-  "timestamp": "2025-10-02T12:00:00Z"
+    "success": true,
+    "message": "Orden de compra creada exitosamente",
+    "data": {
+        "id": 3,
+        "cliente": "Empresa Innovadora Ltda.",
+        "fechaCreacion": "2025-10-03T03:29:17.9991821Z",
+        "total": 24750.00,
+        "ordenProductos": [
+            {
+                "id": 9,
+                "productoId": 1,
+                "productoNombre": "Laptop HP Pavilion"
+            },
+            {
+                "id": 10,
+                "productoId": 4,
+                "productoNombre": "Monitor 24 pulgadas"
+            },
+            {
+                "id": 11,
+                "productoId": 5,
+                "productoNombre": "Impresora Multifuncional"
+            }
+        ]
+    },
+    "timestamp": "2025-10-03T03:29:18.2502663Z"
 }
 ```
 
+**Captura de pantalla en Postman:**
+
+<div align="center">
+  <img src="docs/images/POST Orden 3.png" alt="POST Orden en Postman" width="800">
+  <br>
+  <em>Ejemplo de creación de orden con POST /api/ordenes en Postman</em>
+</div>
+
 ### Editar una Orden de Compra Existente (por ID)
 ```bash
-PUT /api/ordenes/1
+PUT http://localhost:5064/api/ordenes/3
 Content-Type: application/json
 
 {
-  "cliente": "TechSolutions S.A. - Actualizado",
+  "cliente": "Empresa Innovadora Ltda. - Sucursal Norte",
   "ordenProductos": [
-    { "productoId": 1 },
-    { "productoId": 2 },
-    { "productoId": 5 }
+    {
+      "productoId": 1
+    },
+    {
+      "productoId": 2
+    },
+    {
+      "productoId": 6
+    }
   ]
 }
 ```
@@ -404,48 +567,64 @@ Content-Type: application/json
 **Respuesta exitosa:**
 ```json
 {
-  "success": true,
-  "message": "Orden de compra actualizada exitosamente",
-  "data": {
-    "id": 1,
-    "cliente": "TechSolutions S.A. - Actualizado",
-    "fechaCreacion": "2025-10-01T10:30:00Z",
-    "total": 21150.00,
-    "ordenProductos": [
-      {
-        "id": 1,
-        "productoId": 1,
-        "productoNombre": "Laptop HP Pavilion"
-      },
-      {
-        "id": 2,
-        "productoId": 2,
-        "productoNombre": "Mouse Logitech"
-      },
-      {
-        "id": 10,
-        "productoId": 5,
-        "productoNombre": "Impresora Multifuncional"
-      }
-    ]
-  },
-  "timestamp": "2025-10-02T12:00:00Z"
+    "success": true,
+    "message": "Orden de compra actualizada exitosamente",
+    "data": {
+        "id": 3,
+        "cliente": "Empresa Innovadora Ltda. - Sucursal Norte",
+        "fechaCreacion": "2025-10-03T03:29:17.9991821",
+        "total": 17100.00,
+        "ordenProductos": [
+            {
+                "id": 9,
+                "productoId": 1,
+                "productoNombre": "Laptop HP Pavilion"
+            },
+            {
+                "id": 12,
+                "productoId": 2,
+                "productoNombre": "Mouse Logitech"
+            },
+            {
+                "id": 13,
+                "productoId": 6,
+                "productoNombre": "Silla Ergonómica"
+            }
+        ]
+    },
+    "timestamp": "2025-10-03T03:32:04.2987495Z"
 }
 ```
 
+**Captura de pantalla en Postman:**
+
+<div align="center">
+  <img src="docs/images/PUT Orden 3.png" alt="PUT Orden en Postman" width="800">
+  <br>
+  <em>Ejemplo de actualización de orden con PUT /api/ordenes/{id} en Postman</em>
+</div>
+
 ### Eliminar una Orden de Compra y todas sus Asociaciones
 ```bash
-DELETE /api/ordenes/1
+DELETE http://localhost:5064/api/ordenes/3
 ```
 
 **Respuesta exitosa:**
 ```json
 {
-  "success": true,
-  "message": "Orden de compra eliminada exitosamente",
-  "timestamp": "2025-10-02T12:00:00Z"
+    "success": true,
+    "message": "Orden de compra eliminada exitosamente",
+    "timestamp": "2025-10-03T03:33:47.3839167Z"
 }
 ```
+
+**Captura de pantalla en Postman:**
+
+<div align="center">
+  <img src="docs/images/DEL Orden 3.png" alt="DELETE Orden en Postman" width="800">
+  <br>
+  <em>Ejemplo de eliminación de orden con DELETE /api/ordenes/{id} en Postman</em>
+</div>
 
 **Respuesta de error (404 Not Found):**
 ```json
@@ -489,7 +668,56 @@ DELETE /api/ordenes/1
 }
 ```
 
-## 💼 Reglas de Negocio
+## � Colección de Postman
+
+Para facilitar las pruebas de la API, se incluye una colección completa de Postman con todos los endpoints configurados.
+
+### 📁 **Ubicación del archivo:**
+```
+docs/postman/Voultech API Tests.postman_collection.json
+```
+
+### 🚀 **Cómo importar la colección:**
+
+1. **Abrir Postman**
+2. **Click en "Import"** (botón en la esquina superior izquierda)
+3. **Seleccionar "Upload Files"**
+4. **Navegar y seleccionar** el archivo `Voultech API Tests.postman_collection.json`
+5. **Click "Import"**
+
+### ⚙️ **Configuración recomendada:**
+
+Una vez importada la colección, configura las siguientes variables:
+
+1. **Crear Environment** (opcional pero recomendado):
+   - **Variable**: `baseUrl`
+   - **Valor**: `http://localhost:5064`
+
+2. **Usar la variable en requests**:
+   - Los endpoints ya están configurados para usar `{{baseUrl}}` si tienes la variable configurada
+   - Si no usas variables, verifica que la URL base sea correcta en cada request
+
+### 📋 **Contenido de la colección:**
+
+La colección incluye requests para todos los endpoints:
+
+- ✅ **GET** `/api/productos` - Listar productos
+- ✅ **POST** `/api/productos` - Crear producto
+- ✅ **GET** `/api/ordenes` - Listar órdenes
+- ✅ **GET** `/api/ordenes/{id}` - Obtener orden específica
+- ✅ **POST** `/api/ordenes` - Crear orden
+- ✅ **PUT** `/api/ordenes/{id}` - Actualizar orden
+- ✅ **DELETE** `/api/ordenes/{id}` - Eliminar orden
+
+### 🧪 **Tests automatizados incluidos:**
+
+Cada request incluye tests automáticos que verifican:
+- Códigos de estado HTTP correctos
+- Estructura de respuesta válida
+- Presencia de campos requeridos
+- Tipos de datos esperados
+
+## � Reglas de Negocio
 
 ### Cálculo de Descuentos Dinámicos
 El sistema aplica descuentos automáticos basados en las siguientes reglas:

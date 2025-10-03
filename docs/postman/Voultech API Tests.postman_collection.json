@@ -1,0 +1,549 @@
+{
+	"info": {
+		"_postman_id": "407c88e6-60a6-47e6-8685-ac24906328ce",
+		"name": "Voultech API Tests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "23879897"
+	},
+	"item": [
+		{
+			"name": "Productos",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5064/api/productos",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5064",
+					"path": [
+						"api",
+						"productos"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Response",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5064/api/productos",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5064",
+							"path": [
+								"api",
+								"productos"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": null,
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Date",
+							"value": "Fri, 03 Oct 2025 03:07:56 GMT"
+						},
+						{
+							"key": "Server",
+							"value": "Kestrel"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"success\": true,\n    \"message\": \"Productos obtenidos exitosamente\",\n    \"data\": [\n        {\n            \"id\": 1,\n            \"nombre\": \"Laptop HP Pavilion\",\n            \"precio\": 15000\n        },\n        {\n            \"id\": 2,\n            \"nombre\": \"Mouse Logitech\",\n            \"precio\": 500\n        },\n        {\n            \"id\": 3,\n            \"nombre\": \"Teclado Mecánico\",\n            \"precio\": 1200\n        },\n        {\n            \"id\": 4,\n            \"nombre\": \"Monitor 24 pulgadas\",\n            \"precio\": 4500\n        },\n        {\n            \"id\": 5,\n            \"nombre\": \"Impresora Multifuncional\",\n            \"precio\": 8000\n        },\n        {\n            \"id\": 6,\n            \"nombre\": \"Silla Ergonómica\",\n            \"precio\": 3500\n        }\n    ],\n    \"timestamp\": \"2025-10-03T03:07:56.4577255Z\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Productos",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"nombre\": \"Webcam HD 1080p\",\r\n  \"precio\": 2500.00\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5064/api/productos",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5064",
+					"path": [
+						"api",
+						"productos"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Response",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"nombre\": \"Webcam HD 1080p\",\r\n  \"precio\": 2500.00\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5064/api/productos",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5064",
+							"path": [
+								"api",
+								"productos"
+							]
+						}
+					},
+					"status": "Created",
+					"code": 201,
+					"_postman_previewlanguage": null,
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Date",
+							"value": "Fri, 03 Oct 2025 03:12:47 GMT"
+						},
+						{
+							"key": "Server",
+							"value": "Kestrel"
+						},
+						{
+							"key": "Location",
+							"value": "http://localhost:5064/api/productos"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"success\": true,\n    \"message\": \"Producto creado exitosamente\",\n    \"data\": {\n        \"id\": 7,\n        \"nombre\": \"Webcam HD 1080p\",\n        \"precio\": 2500\n    },\n    \"timestamp\": \"2025-10-03T03:12:48.1054592Z\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Ordenes",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"nombre\": \"Webcam HD 1080p\",\r\n  \"precio\": 2500.00\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5064/api/ordenes",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5064",
+					"path": [
+						"api",
+						"ordenes"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Response",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"nombre\": \"Webcam HD 1080p\",\r\n  \"precio\": 2500.00\r\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5064/api/ordenes",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5064",
+							"path": [
+								"api",
+								"ordenes"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": null,
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Date",
+							"value": "Fri, 03 Oct 2025 03:15:25 GMT"
+						},
+						{
+							"key": "Server",
+							"value": "Kestrel"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"success\": true,\n    \"data\": [\n        {\n            \"id\": 1,\n            \"cliente\": \"TechSolutions S.A.\",\n            \"fechaCreacion\": \"2025-10-01T10:30:00\",\n            \"total\": 16700,\n            \"ordenProductos\": [\n                {\n                    \"id\": 1,\n                    \"productoId\": 1,\n                    \"productoNombre\": \"Laptop HP Pavilion\"\n                },\n                {\n                    \"id\": 2,\n                    \"productoId\": 2,\n                    \"productoNombre\": \"Mouse Logitech\"\n                },\n                {\n                    \"id\": 3,\n                    \"productoId\": 3,\n                    \"productoNombre\": \"Teclado Mecánico\"\n                }\n            ]\n        },\n        {\n            \"id\": 2,\n            \"cliente\": \"Oficinas Corporativas Voultech\",\n            \"fechaCreacion\": \"2025-10-02T14:15:00\",\n            \"total\": 16000,\n            \"ordenProductos\": [\n                {\n                    \"id\": 4,\n                    \"productoId\": 4,\n                    \"productoNombre\": \"Monitor 24 pulgadas\"\n                },\n                {\n                    \"id\": 5,\n                    \"productoId\": 5,\n                    \"productoNombre\": \"Impresora Multifuncional\"\n                },\n                {\n                    \"id\": 6,\n                    \"productoId\": 6,\n                    \"productoNombre\": \"Silla Ergonómica\"\n                }\n            ]\n        }\n    ],\n    \"message\": \"Órdenes obtenidas exitosamente\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Orden Id",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"nombre\": \"Webcam HD 1080p\",\r\n  \"precio\": 2500.00\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5064/api/ordenes/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5064",
+					"path": [
+						"api",
+						"ordenes",
+						"1"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Response",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"nombre\": \"Webcam HD 1080p\",\r\n  \"precio\": 2500.00\r\n}"
+						},
+						"url": {
+							"raw": "http://localhost:5064/api/ordenes/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5064",
+							"path": [
+								"api",
+								"ordenes",
+								"1"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": null,
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Date",
+							"value": "Fri, 03 Oct 2025 03:16:54 GMT"
+						},
+						{
+							"key": "Server",
+							"value": "Kestrel"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"success\": true,\n    \"message\": \"Orden obtenida exitosamente\",\n    \"data\": {\n        \"id\": 1,\n        \"cliente\": \"TechSolutions S.A.\",\n        \"fechaCreacion\": \"2025-10-01T10:30:00\",\n        \"total\": 16700,\n        \"ordenProductos\": [\n            {\n                \"id\": 1,\n                \"productoId\": 1,\n                \"productoNombre\": \"Laptop HP Pavilion\"\n            },\n            {\n                \"id\": 2,\n                \"productoId\": 2,\n                \"productoNombre\": \"Mouse Logitech\"\n            },\n            {\n                \"id\": 3,\n                \"productoId\": 3,\n                \"productoNombre\": \"Teclado Mecánico\"\n            }\n        ]\n    },\n    \"timestamp\": \"2025-10-03T03:16:54.1128915Z\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Orden",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"cliente\": \"Empresa Innovadora Ltda.\",\r\n  \"ordenProductos\": [\r\n    {\r\n      \"productoId\": 1\r\n    },\r\n    {\r\n      \"productoId\": 4\r\n    },\r\n    {\r\n      \"productoId\": 5\r\n    }\r\n  ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5064/api/ordenes",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5064",
+					"path": [
+						"api",
+						"ordenes"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Response",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"cliente\": \"Empresa Innovadora Ltda.\",\r\n  \"ordenProductos\": [\r\n    {\r\n      \"productoId\": 1\r\n    },\r\n    {\r\n      \"productoId\": 4\r\n    },\r\n    {\r\n      \"productoId\": 5\r\n    }\r\n  ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5064/api/ordenes",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5064",
+							"path": [
+								"api",
+								"ordenes"
+							]
+						}
+					},
+					"status": "Created",
+					"code": 201,
+					"_postman_previewlanguage": null,
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Date",
+							"value": "Fri, 03 Oct 2025 03:29:18 GMT"
+						},
+						{
+							"key": "Server",
+							"value": "Kestrel"
+						},
+						{
+							"key": "Location",
+							"value": "http://localhost:5064/api/ordenes/4"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"success\": true,\n    \"message\": \"Orden de compra creada exitosamente\",\n    \"data\": {\n        \"id\": 4,\n        \"cliente\": \"Empresa Innovadora Ltda.\",\n        \"fechaCreacion\": \"2025-10-03T03:29:17.9991821Z\",\n        \"total\": 24750,\n        \"ordenProductos\": [\n            {\n                \"id\": 9,\n                \"productoId\": 1,\n                \"productoNombre\": \"Laptop HP Pavilion\"\n            },\n            {\n                \"id\": 10,\n                \"productoId\": 4,\n                \"productoNombre\": \"Monitor 24 pulgadas\"\n            },\n            {\n                \"id\": 11,\n                \"productoId\": 5,\n                \"productoNombre\": \"Impresora Multifuncional\"\n            }\n        ]\n    },\n    \"timestamp\": \"2025-10-03T03:29:18.2502663Z\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Orden Id",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"cliente\": \"Empresa Innovadora Ltda. - Sucursal Norte\",\r\n  \"ordenProductos\": [\r\n    {\r\n      \"productoId\": 1\r\n    },\r\n    {\r\n      \"productoId\": 2\r\n    },\r\n    {\r\n      \"productoId\": 6\r\n    }\r\n  ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5064/api/ordenes/4",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5064",
+					"path": [
+						"api",
+						"ordenes",
+						"4"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Response",
+					"originalRequest": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"cliente\": \"Empresa Innovadora Ltda. - Sucursal Norte\",\r\n  \"ordenProductos\": [\r\n    {\r\n      \"productoId\": 1\r\n    },\r\n    {\r\n      \"productoId\": 2\r\n    },\r\n    {\r\n      \"productoId\": 6\r\n    }\r\n  ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5064/api/ordenes/4",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5064",
+							"path": [
+								"api",
+								"ordenes",
+								"4"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": null,
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Date",
+							"value": "Fri, 03 Oct 2025 03:32:03 GMT"
+						},
+						{
+							"key": "Server",
+							"value": "Kestrel"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"success\": true,\n    \"message\": \"Orden de compra actualizada exitosamente\",\n    \"data\": {\n        \"id\": 4,\n        \"cliente\": \"Empresa Innovadora Ltda. - Sucursal Norte\",\n        \"fechaCreacion\": \"2025-10-03T03:29:17.9991821\",\n        \"total\": 17100,\n        \"ordenProductos\": [\n            {\n                \"id\": 9,\n                \"productoId\": 1,\n                \"productoNombre\": \"Laptop HP Pavilion\"\n            },\n            {\n                \"id\": 12,\n                \"productoId\": 2,\n                \"productoNombre\": \"Mouse Logitech\"\n            },\n            {\n                \"id\": 13,\n                \"productoId\": 6,\n                \"productoNombre\": \"Silla Ergonómica\"\n            }\n        ]\n    },\n    \"timestamp\": \"2025-10-03T03:32:04.2987495Z\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Orden Id",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:5064/api/ordenes/4",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5064",
+					"path": [
+						"api",
+						"ordenes",
+						"4"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Response",
+					"originalRequest": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:5064/api/ordenes/4",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5064",
+							"path": [
+								"api",
+								"ordenes",
+								"4"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": null,
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Date",
+							"value": "Fri, 03 Oct 2025 03:33:46 GMT"
+						},
+						{
+							"key": "Server",
+							"value": "Kestrel"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"success\": true,\n    \"message\": \"Orden de compra eliminada exitosamente\",\n    \"timestamp\": \"2025-10-03T03:33:47.3839167Z\"\n}"
+				}
+			]
+		}
+	]
+}
